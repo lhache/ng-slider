@@ -1,0 +1,19 @@
+{
+    "author": "Louis Hache + Julien Falxa",
+    "name": "ng-slider",
+    "description": "Sliders For AngularJS",
+    "version": "0.0.0",
+    "homepage": "http://github.com/lhache/ng-slider",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/lhache/ng-slider"
+    },
+    "dependencies": {
+        "angular": "1.2.0"
+    },
+    "devDependencies": {
+        "angular": ">=1.2.0",
+        "underscore" : "*",
+        "ngMidwayTester": "yearofmoo/ngMidwayTester"
+    }
+}
