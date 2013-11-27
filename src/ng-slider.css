@@ -1,0 +1,29 @@
+.slider-background
+{
+  border: 1px solid;
+  border-radius: 3px;
+  width: 300px;
+  height: 8px;
+  position: relative;
+  margin: 15px;
+  display: inline-block;
+}
+
+.slider-overlay
+{
+  height: 8px;
+  background: orange;
+  position: absolute;
+}
+
+.slider-range
+{
+  border: 1px solid;
+  border-radius: 14px;
+  width: 14px;
+  height: 14px;
+  margin-top: -4px;
+  background: white;
+  position: absolute;
+  left: -7px;
+}
