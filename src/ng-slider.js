@@ -64,11 +64,16 @@ var ngSliderMod = angular.module('ngSliderModule', [])
                     left:  posPx - handleWidth/2 + 'px'
                 });
 
-                currentHandle.pos = posPx - handleWidth/2;
+                currentHandle.pos = posPx;
 
-                overlayWidth = posPx;
+                
                 if (handles.length > 1) {
-                    // TODO overlay between the two handles
+                    overlayWidth = handles[1].pos - handles[0].pos;
+                    overlayLeft = handles[0].pos;
+                }
+                else
+                {
+                    overlayWidth = posPx;
                 }
 
                 overlay.css({
@@ -93,11 +98,28 @@ var ngSliderMod = angular.module('ngSliderModule', [])
             }
 
             function checkBoundaries(x) {
-                if (x < 0) x = 0;
-                if (x > widthPx) x = widthPx;
+                if (x < 0)
+                {
+                    x = 0;
+                }
 
-                //TODO handle 0 < handle 1
-                // + handle 1 > handle 0
+                if (x > widthPx)
+                {
+                    x = widthPx;  
+                } 
+
+                if (handles.length > 1)
+                {
+                    if (currentHandle.index == 0 && x >= handles[1].pos)
+                    {
+                        x = handles[1].pos;
+                    }
+
+                    if (currentHandle.index == 1 && x <= handles[0].pos)
+                    {
+                        x = handles[0].pos;
+                    }
+                }
 
                 return x;
             }
