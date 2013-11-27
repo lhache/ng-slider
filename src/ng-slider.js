@@ -21,10 +21,11 @@ var ngSliderMod = angular.module('ngSliderModule', [])
             var widthVal = scope.to - scope.from;
             var offsetLeft = element[0].offsetLeft;
 
-            var handles = [], handlesTmp = element.find('a');
+            var handles = [], currentHandle, handlesTmp = element.find('a');
             var overlay = angular.element(element.find('div')[0]);
 
             if (!angular.isArray(scope.value) && angular.isNumber(parseFloat(scope.value))) {
+                scope.value = [scope.value];
                 handlesTmp[1].remove();
                 handlesTmp.length = 1;
             }
@@ -39,7 +40,6 @@ var ngSliderMod = angular.module('ngSliderModule', [])
             }
 
             delete handlesTmp;
-            var currentHandle = handles[0];
 
             function computeValue(posPx) {
                 posPx = checkBoundaries(posPx);
@@ -50,6 +50,11 @@ var ngSliderMod = angular.module('ngSliderModule', [])
                 return scope.step * stepNumber + scope.from;
             }
 
+            function setValue(value) {
+                scope.value[currentHandle.index] = value;
+                scope.$apply();
+            }
+
             function computePosition(posVal) {
                 var handleWidth = 14;
                 var overlayLeft = 0, overlayWidth = 0;
@@ -58,11 +63,12 @@ var ngSliderMod = angular.module('ngSliderModule', [])
                 currentHandle.element.css({
                     left:  posPx - handleWidth/2 + 'px'
                 });
-                
-                overlayWidth = posPx;
-                if (handles.length > 1)
-                {
 
+                currentHandle.pos = posPx - handleWidth/2;
+
+                overlayWidth = posPx;
+                if (handles.length > 1) {
+                    // TODO overlay between the two handles
                 }
 
                 overlay.css({
@@ -74,18 +80,14 @@ var ngSliderMod = angular.module('ngSliderModule', [])
             function selectHandle(posPx) {
                 var handle, distance = Number.POSITIVE_INFINITY;
 
-                for (var i in handles)
-                {
+                for (var i in handles) {
                     var currentDistance = Math.abs(handles[i].pos - posPx);
                     
-                    if (currentDistance < distance)
-                    {
+                    if (currentDistance < distance) {
                         distance = currentDistance;
                         handle = handles[i];
                     }
                 }
-
-                handle.pos = posPx;
 
                 return handle;
             }
@@ -93,13 +95,17 @@ var ngSliderMod = angular.module('ngSliderModule', [])
             function checkBoundaries(x) {
                 if (x < 0) x = 0;
                 if (x > widthPx) x = widthPx;
+
+                //TODO handle 0 < handle 1
+                // + handle 1 > handle 0
+
                 return x;
             }
 
             function onMouseMove(event) {
                 var currentX = event.pageX - offsetLeft;
-                scope.value = computeValue(currentX);
-                scope.$apply()
+                var value = computeValue(currentX);
+                setValue(value);
             }
 
             function onMouseUp() {
@@ -115,13 +121,23 @@ var ngSliderMod = angular.module('ngSliderModule', [])
 
                 var currentX = event.pageX - offsetLeft;
                 currentHandle = selectHandle(currentX);
-                scope.value = computeValue(currentX);
-                scope.$apply()
+                var value = computeValue(currentX);
+                setValue(value);
             });
 
             scope.$watch('value', function(newValue, oldValue) {
-                computePosition(newValue);
-            });
+
+                if (currentHandle == undefined) {
+                    for (var i in handles) {
+                        currentHandle = handles[i];
+                        computePosition(newValue[i])
+                    }
+                }
+                else {
+                    computePosition(newValue[currentHandle.index]);
+                }
+
+            }, true);
           }
   }
   });

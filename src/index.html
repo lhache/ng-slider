@@ -14,7 +14,7 @@
 			<ng-slider from="sv.from" to="sv.to" value="sv.value" step="sv.step"></ng-slider>
 
 			<div>
-				<input ng-model="sv.value"/>
+				<input ng-model="v" ng-repeat="v in sv.value"/>
 				<input ng-model="sv.step"/>
 			</div>
 

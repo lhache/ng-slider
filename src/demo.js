@@ -11,7 +11,7 @@ angular.module('sliderDemo', ['ngSliderModule']).
 			{
 				from: 100,
 				to: 500,
-				value: [150, 333],
+				value: [250, 450],
 				step: 10
 			}
 		];
