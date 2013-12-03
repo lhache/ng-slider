@@ -18,24 +18,17 @@ ngSliderMod.directive('ngSlider', function($document) {
 
         link: function(scope, element, attrs) {
 
-            var widthPx = element[0].offsetWidth;
             var widthVal = scope.to - scope.from;
-            var offsetLeft = element[0].offsetLeft;
+            var handleTop = 0;
+            var valueBeforeChange;
 
             var handles = [], currentHandle, handlesTmp = element.find('a');
             var overlay = angular.element(element.find('div')[0]);
-            var handleTop = 0;
-
-            var valueBeforeChange;
 
             if (!angular.isArray(scope.value) && angular.isNumber(parseFloat(scope.value))) {
                 scope.value = [scope.value];
                 handlesTmp[1].remove();
                 handlesTmp.length = 1;
-            }
-
-            if (scope.value.length > 2) {
-                scope.value = scope.value.slice(0,2);
             }
 
             for (var i=0; i<handlesTmp.length; i++)
@@ -49,7 +42,6 @@ ngSliderMod.directive('ngSlider', function($document) {
                 centerHandle(handles[i]);
             }
 
-            var handleWidth = handles[0].element[0].clientWidth;
             delete handlesTmp;
 
             function width() {
@@ -64,6 +56,10 @@ ngSliderMod.directive('ngSlider', function($document) {
                 return element[0].offsetLeft;
             }
 
+            function handleWidth() {
+                return handles[0].element[0].clientWidth;
+            }
+
             function centerHandle(handle) {
                 var handleTop = (height() - handle.element[0].offsetHeight) / 2;
                 handle.element.css({
@@ -72,15 +68,31 @@ ngSliderMod.directive('ngSlider', function($document) {
             }
 
             function selectHandle(x) {
-                var handle, distance = Number.POSITIVE_INFINITY;
+                var handle;
 
-                for (var i in handles) {
-                    var currentDistance = Math.abs(handles[i].pos - x);
-
-                    if (currentDistance < distance) {
-                        distance = currentDistance;
-                        handle = handles[i];
+                if (handles.length == 1) {
+                    handle = handles[0];
+                }
+                else {
+                    if (x <= handles[0].pos) {
+                        handle = handles[0];
                     }
+                    else if (x > handles[1].pos) {
+                        handle = handles[1];
+                    }
+                    else if (x > handles[0].pos && x < handles[1].pos) {
+                        var distance = Number.POSITIVE_INFINITY;
+
+                        for (var i in handles) {
+                            var currentDistance = Math.abs(handles[i].pos - x);
+
+                            if (currentDistance < distance) {
+                                distance = currentDistance;
+                                handle = handles[i];
+                            }
+                        }
+                    }
+                    
                 }
 
                 return handle;
@@ -90,7 +102,6 @@ ngSliderMod.directive('ngSlider', function($document) {
                 var stepNumber = Math.round((val - scope.from) / scope.step)
                 return scope.step * stepNumber + scope.from;
             }
-
 
             function computeValue(x) {
                 x = checkPosition(x);
@@ -161,7 +172,7 @@ ngSliderMod.directive('ngSlider', function($document) {
                 var overlayLeft = 0, overlayWidth = 0;
 
                 currentHandle.element.css({
-                    left:  pos - handleWidth/2 + 'px'
+                    left:  pos - handleWidth()/2 + 'px'
                 });
 
                 currentHandle.pos = pos;
@@ -185,7 +196,7 @@ ngSliderMod.directive('ngSlider', function($document) {
             function slide(event) {
                 scope.$emit('slide', {'handle': currentHandle.index});
 
-                var currentX = event.pageX - offsetLeft;
+                var currentX = event.pageX - left();
                 var value = computeValue(currentX);
                 setValue(value);
             }
@@ -202,14 +213,14 @@ ngSliderMod.directive('ngSlider', function($document) {
 
             element.on('mousedown', function(event) {
                 event.preventDefault();
-                
+
                 if (event.which == 1) {
                     valueBeforeChange = scope.value.slice(0);
 
                     $document.on('mousemove', slide);
                     $document.on('mouseup', mouseUp);
 
-                    var currentX = event.pageX - offsetLeft;
+                    var currentX = event.pageX - left();
                     currentHandle = selectHandle(currentX);
                     var value = computeValue(currentX);
                     setValue(value);
