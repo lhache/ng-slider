@@ -1,0 +1,41 @@
+<!doctype html>
+<html ng-app="sliderDemo">
+	<head>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.3/angular.min.js"></script>
+		<script type="text/javascript" src="/src/ng-slider.js"></script>
+		<script type="text/javascript" src="demo.js"></script>
+		<link rel="stylesheet" type="text/css" href="/src/ng-slider.css" />
+	</head>
+
+	<body ng-controller="sliderDemoCtrl">
+		
+		<div>
+			
+			<ng-slider from="simpleSlider.from" to="simpleSlider.to" value="simpleSlider.value" step="simpleSlider.step"></ng-slider>
+
+			<div>
+				<input ng-model="simpleSlider.value[0]"/>
+				<input ng-model="simpleSlider.step"/>
+			</div>
+
+			<br/>
+
+		</div>
+
+		<div>
+			
+			<ng-slider from="doubleSlider.from" to="doubleSlider.to" value="doubleSlider.value" step="doubleSlider.step"></ng-slider>
+
+			<div>
+				<input ng-model="doubleSlider.value[0]"/>
+				<input ng-model="doubleSlider.value[1]"/>
+				<input ng-model="doubleSlider.step"/>
+			</div>
+
+			<br/>
+
+		</div>
+
+	</body>
+
+</html>
